@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText et_fn, et_ln, et_pwd, et_cpwd, et_birth;
     private String fn, ln, pwd, cpwd, birth;
-    private Button btn_save;
+    private Button btn_save, btn_retrieve;
     private User user;
     private long maxID = 0;
 
@@ -41,10 +41,19 @@ public class MainActivity extends AppCompatActivity {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                test();
+                save();
             }
         });
 
+        btn_retrieve = (Button)findViewById(R.id.button_get_data);
+        btn_retrieve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retrieve();
+            }
+        });
+
+        // change the getInstance to getInstance('firebase_database_link')
         mdatabaseReference = FirebaseDatabase.getInstance("https://test-jl010.firebaseio.com/").getReference().child("user");
         mdatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -61,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void test(){
+    private void save(){
         fn = et_fn.getText().toString().trim();
         ln = et_ln.getText().toString().trim();
         pwd = et_pwd.getText().toString().trim();
@@ -76,12 +85,37 @@ public class MainActivity extends AppCompatActivity {
             user.setBirth(birth);
 
             mdatabaseReference.child(String.valueOf(maxID+1)).setValue(user);
-//            mdatabaseReference.push().setValue(user);
             Toast.makeText(this, "Information is saved !!!", Toast.LENGTH_SHORT).show();
 
         }else{
             Toast.makeText(this, "The password id not the same", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void retrieve(){
+        mdatabaseReference = FirebaseDatabase.getInstance("https://test-jl010.firebaseio.com/").getReference().child("user").child("1");
+        mdatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String firstName = dataSnapshot.child("firstName").getValue().toString();
+                String lastName = dataSnapshot.child("lastName").getValue().toString();
+                String password = dataSnapshot.child("password").getValue().toString();
+                String birth = dataSnapshot.child("birth").getValue().toString();
+
+                et_fn.setText(firstName);
+                et_ln.setText(lastName);
+                et_pwd.setText(password);
+                et_cpwd.setText(password);
+                et_birth.setText(birth);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Toast.makeText(this, "Data retrieved", Toast.LENGTH_SHORT).show();
     }
 }
