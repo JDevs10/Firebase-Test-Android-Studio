@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             user.setPassword(pwd);
             user.setBirth(birth);
 
-            mdatabaseReference.setValue(user);
+            mdatabaseReference.push().setValue(user);
             Toast.makeText(this, "Information is saved !!!", Toast.LENGTH_SHORT).show();
 
         }else{
