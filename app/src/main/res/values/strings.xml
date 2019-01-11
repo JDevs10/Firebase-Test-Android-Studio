@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">FirebaseTest</string>
+    <string name="first_name">First Name</string>
+    <string name="lastname">LastName</string>
+    <string name="password">Password...</string>
+    <string name="confirm_password">Confirm password...</string>
+    <string name="_01_01_2000">01/01/2000</string>
+    <string name="save">Save</string>
 </resources>
