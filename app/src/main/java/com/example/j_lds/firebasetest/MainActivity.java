@@ -1,5 +1,6 @@
 package com.example.j_lds.firebasetest;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -7,8 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private String fn, ln, pwd, cpwd, birth;
     private Button btn_save;
     private User user;
+    private long maxID = 0;
 
     private DatabaseReference mdatabaseReference;
 
@@ -41,6 +46,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mdatabaseReference = FirebaseDatabase.getInstance("https://test-jl010.firebaseio.com/").getReference().child("user");
+        mdatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    maxID = (dataSnapshot.getChildrenCount());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void test(){
@@ -57,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
             user.setPassword(pwd);
             user.setBirth(birth);
 
-            mdatabaseReference.push().setValue(user);
+            mdatabaseReference.child(String.valueOf(maxID+1)).setValue(user);
+//            mdatabaseReference.push().setValue(user);
             Toast.makeText(this, "Information is saved !!!", Toast.LENGTH_SHORT).show();
 
         }else{
